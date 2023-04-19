@@ -1,0 +1,53 @@
+.chatbox {
+  position: fixed;
+  bottom: 0px;
+  width: 67.6vw;
+  height: 4vw;
+  margin-left: 25vw;
+  margin-bottom: 3.3333vw;
+  border: none;
+  background: white;
+  box-shadow: 0px .2667vw .4vw rgba(0, 0, 0, 0.1);
+  border-radius: .2667vw;
+
+}
+
+.inputchat{
+  width: 80%;
+  height: 100%;
+  border: none;
+  margin-top: auto;
+  margin-bottom: auto;
+  background: transparent;
+
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-size: .9333vw;
+  line-height: 1.3333vw;
+  color: #9A9A9A;
+  letter-spacing: .1333vw;
+  padding-left: 3.3333vw;
+}
+
+.inputchat:focus{
+  color: black;
+  outline: none;
+}
+
+.sendbtn {
+  position:  fixed;
+  border: none;
+  background-color: transparent;
+  padding-top: 1.1vw;
+  color: #1AA7EC;
+  font-size: 1.7vw;
+  align-self: right;
+  margin-left: 6vw;
+}
+
+.sendbtn:hover {
+  cursor: pointer;
+  color:#7947ce;
+}
+
