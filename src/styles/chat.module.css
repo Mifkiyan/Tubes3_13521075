@@ -187,7 +187,7 @@
 
 /* Set the color of the scroll bar */
 .chatArea::-webkit-scrollbar-thumb {
-  background-color: rgba(0, 0, 0, 0.05);
+  background-color: rgba(21, 150, 189, 0.586);
   border-radius: 1.3333vw;
   color: #1AA7EC;
 }

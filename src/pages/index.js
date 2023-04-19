@@ -1,21 +1,34 @@
 import Image from 'next/image'
 import { Inter } from 'next/font/google'
-import { useState, useEffect } from 'react'
 import styles from '../styles/chat.module.css'
-import Script from 'next/script'
+import Sidebar from '../components/sidebar'
+import Chatarea from '../components/chatarea'
+import Typebox from '../components/typebox'
+import Loading from '../components/loading'
+import Welcome from '../components/welcome'
+import { useQuery } from 'react-query'
+import { getAllRooms } from '../../lib/request'
+import { useState } from 'react'
 
 const inter = Inter({ subsets: ['latin'] })
 
 export default function Home() {
-    const [inputValue, setInputValue] = useState('')
-    const [chatLog, setChatLog] = useState([])
-    
-    const handleSubmit = (event) => {
-      event.preventDefault()
-      if (inputValue === '') return
-      setChatLog((prevChatLog) => [...prevChatLog, inputValue])
-      setInputValue('')
-    }
+
+  const [ roomid, setRoomid ] = useState(null)
+  const { isLoading, isError, data, error} = useQuery("rooms", getAllRooms)
+
+  if (isLoading) return <Loading></Loading>
+  if (isError) return <div>Error: {error.message}</div>
+  if (!data) return <div>Not found</div>
+
+  function onRoomClick (roomid) {
+    data.filter(room => {
+      if(room._id === roomid) {
+        setRoomid(roomid)
+      }
+    })
+  }
+ 
   return (
     <>
       <div className={styles.body}>
@@ -32,39 +45,16 @@ export default function Home() {
             </div>
           </div>
         </div>
-        <div className={styles.sidebar} >
-          <div className={styles.newchat}>
-            <button className={styles.newbtn}>NEW CHAT</button>
-          </div>
-          <div className={styles.containerhistory}></div>
-          <div className={styles.lowerside}>
-            <div>
-              <p className={styles.choosetxt}>Choose Algorithm !</p>
-            </div>
-            <div className={styles.option}>
-              <input type="radio" value="KMP" id="kmp"/>
-              <label for="kmp">KMP</label>
-            </div>
-            <div className={styles.option}>
-              <input type="radio" value="BM" id="bm"/>
-              <label for="bm">BM</label>
-            </div>
-          </div>
-        </div>
-        <div className={styles.chatArea}>
-          {
-            chatLog.map((message, index) => (
-              <div className={styles.chatUser}key = {index} >
-                <p className={styles.chatUserContent}>{message}</p>
-              </div>
-            ))
-          }
-        </div>
-        <form className={styles.chatbox}>
-          <input  className={styles.inputchat} type="text" placeholder="TYPE A MESSAGE..." value={inputValue} onChange={(e) => setInputValue(e.target.value)}/>
-          <button className={styles.sendbtn} type="submit" onClick={handleSubmit}>SEND</button>
-        </form>
+        {
+          data && <Sidebar getRooms = {data} handler = {onRoomClick}></Sidebar>
+        }
 
+        {
+          roomid ? <Chatarea roomid = {roomid}></Chatarea> : <Welcome></Welcome>
+        }
+        {
+          roomid && <Typebox roomid = {roomid}></Typebox>
+        }
       </div>
       
 
