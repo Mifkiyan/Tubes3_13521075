@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import { Inter } from 'next/font/google'
-import styles from '../styles/chat.module.css'
+import styles from '../styles/general.module.css'
 import Sidebar from '../components/sidebar'
 import Chatarea from '../components/chatarea'
 import Typebox from '../components/typebox'
@@ -37,12 +37,8 @@ export default function Home() {
             <Image src='/Profiles.png' width={85} height={35}/>
           </div>
           <div className= {styles.groupTitle}>
-            <div className = {styles.title}>
-              <p>TUBES 3 STIMA</p>
-            </div>
-            <div className = {styles.members}>
-              <p>Shelma, Febryan, Rifko</p>
-            </div>
+            <div className = {styles.title}>TUBES 3 STIMA</div>
+            <div className = {styles.members}>Shelma, Febryan, Rifko</div>
           </div>
         </div>
         {
