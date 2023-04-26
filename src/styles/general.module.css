@@ -233,3 +233,43 @@
   margin-bottom: auto;
 }
 
+.loadingPage {
+  background-color: #2F3142;
+  margin: 0px;
+  top: 0px;
+  padding: 0px;
+  height: 100%;
+  width: 100%;
+  right: 0px;
+  position: fixed;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  flex-direction: column;
+  
+}
+
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  color: rgb(255, 255, 255);
+  animation: fade-in-out 2s infinite;
+}
+
+@keyframes fade-in-out {
+  0% {
+    opacity: 0.1;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.1;
+  }
+}
+
+.textloading {
+  color: rgba(255, 255, 255, 0.393);
+}
