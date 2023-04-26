@@ -1,5 +1,6 @@
 import Message from '../models/message.model.js';
 import Room from '../models/room.model.js';
+import { getAnswer } from '../src/algorithm/getAnswer.js';
 
 
 export async function getChat(req, res) {
@@ -35,14 +36,14 @@ export async function createChat(req, res) {
   }
 
   const rooms = await Room.findOne({ _id: roomid });
-
+  const newAnswer = getAnswer(question);
   if (!rooms) {
     return res.status(400).json({error: "room not found"});
   }
 
   const message = new Message({
     question,
-    answer: "answer", // dummy answer
+    answer : newAnswer, // dummy answer
     room : roomid
   })
 
