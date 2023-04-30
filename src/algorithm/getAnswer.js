@@ -1,19 +1,32 @@
 // import { getQna } from "../../lib/request.js";
 
+const { get } = require("mongoose");
+
 
 // ini fungsi utamanya, harusnya regex di sini buat nentuin question fitur apa
-export function getAnswer(question) {
+function getAnswer(question) {
+  const dateRegex = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/;
+  const mathRegex = /^[\d\s\+\-\*\/\(\)]+$/;
 
-  // if question itungaitungan :
-  return calculator(question);
+  // Disini harusnya pake algoritma KMP sama BM nya (kayaknya)
+  const isDate = dateRegex.test(question);
+  const isMath = mathRegex.test(question);
+  if (isDate) {
+    return date(question);
+  }
 
-  // if question tanya waktu :
-  // return date(question)
+  if (isMath) {
+    return calculator(question);
+  }
+
+  else { // Masukin KMP sama BM pake database
+    return "Undefined Question"
+  }
 
   // dst
 }
 
-export function calculator(expression) {
+function calculator(expression) {
   try {
     // Remove any whitespace from the expression
     expression = expression.replace(/\s/g, '');
@@ -97,22 +110,51 @@ export function calculator(expression) {
     if (numStack.length !== 1) {
       throw new Error('Invalid expression');
     }
-    
+
     const result = numStack[0];
     if (isNaN(result)) {
       throw new Error('Invalid expression');
     }
-    
+
     return result.toString();
   } catch (error) {
     return error.message;
   }
 }
 
+function date(question) {
+  try {
+    const dateRegex = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/;
+    const match = question.match(dateRegex);
 
-console.log(calculator('(5*8)+3+s')); 
-console.log(calculator('(3+2)*(x(8-5)*2)')); 
-console.log(calculator('3*(2+5)-4/(1+1)'));
+    const day = parseInt(match[1]);
+    const month = parseInt(match[2]);
+    const year = parseInt(match[3]);
+
+    const date = new Date(year, month - 1, day);
+
+    if (date.getDate() !== day || date.getMonth() !== month - 1 || date.getFullYear() !== year) {
+      throw new Error('Invalid date');
+    }
+
+    const dayOfWeek = date.getDay();
+    const dayOfWeekString = ['minggu', 'senin', 'selasa', 'rabu', 'kamis', 'jumat', 'sabtu'][dayOfWeek];
+
+    return "Hari " + dayOfWeekString;
+  }
+  catch (error) {
+    return error.message;
+  }
+}
+
+
+console.log(getAnswer('(5*8)+3+s'));
+console.log(getAnswer('(3+2)*(x(8-5)*2)'));
+console.log(getAnswer('3 * (2 + 5) - 4 / (1 + 1)'));
+
+console.log(getAnswer('30/04/2023'));
+console.log(getAnswer('31/4/2021')); // April gaada tanggal 31
+console.log(getAnswer('30/x2/2021')); // Masuknya jadi teks
 
 // const data = getQna();
 // console.log(data);
