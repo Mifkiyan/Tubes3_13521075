@@ -4,7 +4,7 @@ const { get } = require("mongoose");
 
 
 // ini fungsi utamanya, harusnya regex di sini buat nentuin question fitur apa
-function getAnswer(question) {
+export function getAnswer(question) {
   const dateRegex = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/;
   const mathRegex = /^[\d\s\+\-\*\/\(\)]+$/;
 
@@ -26,7 +26,7 @@ function getAnswer(question) {
   // dst
 }
 
-function calculator(expression) {
+export function calculator(expression) {
   try {
     // Remove any whitespace from the expression
     expression = expression.replace(/\s/g, '');
@@ -122,7 +122,7 @@ function calculator(expression) {
   }
 }
 
-function date(question) {
+export function date(question) {
   try {
     const dateRegex = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/;
     const match = question.match(dateRegex);
