@@ -4,6 +4,8 @@ import { choosenOption } from "../components/sidebar.js";
 import { useQuery } from "react-query";
 const { get } = require("mongoose");
 
+import * as sm from "./stringMatching.js";
+
 async function fetchQna() {
   console.log("fetching data...");
   let res = await fetch(`${ENV.BASE_URL}/qna`, {
@@ -14,12 +16,12 @@ async function fetchQna() {
   });
   console.log("response status:", res.status);
   let data = await res.json();
-  
-  
+
+
   return data;
 }
 
-  // ini fungsi utamanya, harusnya regex di sini buat nentuin question fitur apa
+// ini fungsi utamanya, harusnya regex di sini buat nentuin question fitur apa
 export async function getAnswer(question) {
   const data = await fetchQna();
   console.log("datalength from getAnswer: " + data.length);
@@ -30,18 +32,10 @@ export async function getAnswer(question) {
   const addQuestionRegex = /^Tambah pertanyaan \[([^\]]+)\] dengan jawaban \[([^\]]+)\]$/;
   const deleteQuestionRegex = /^Hapus pertanyaan \[([^\]]+)\]$/;
 
-  // Disini harusnya pake algoritma KMP sama BM nya (kayaknya)
   const isDate = dateRegex.test(question);
   const isMath = mathRegex.test(question);
   const isAddQuestion = addQuestionRegex.test(question);
   const isDeleteQuestion = deleteQuestionRegex.test(question);
-
-  // ini buat dapetin choosenOption dari sidebar 
-  // if (choosenOption == "KMP") {
-  //   console.log("KMP");
-  // } else if (choosenOption == "BM") {
-  //   console.log("BM");
-  // }
 
   if (isDate) {
     return date(question);
@@ -62,10 +56,48 @@ export async function getAnswer(question) {
     return deleteQuestiontoDatabase(questionToDel); // sesuaiin sama fungsinya
   }
 
-  else { // Masukin KMP sama BM pake database
-    return "Undefined Question"
+  // Fitur pertanyaan teks
+  else {
+    if (choosenOption == "KMP") {
+      console.log("KMP");
+      const similarityList = [];
+      for (let i = 0; i < data.length; i++) {
+        if (sm.kmpSearch(data[i].userQuestion, question) != -1 || sm.kmpSearch(question, data[i].userQuestion) != -1) {
+          return data[i].botAnswer;
+        }
+        similarityList.push(sm.computeLCS(data[i].userQuestion, question)[1]);
+      }
+    }
+    else if (choosenOption == "BM") {
+      console.log("BM");
+      const similarityList = [];
+      for (let i = 0; i < data.length; i++) {
+        if (sm.bmSearch(data[i].userQuestion, question) != -1 || sm.bmSearch(question, data[i].userQuestion) != -1) {
+          return data[i].botAnswer;
+        }
+        similarityList.push(sm.computeLCS(data[i].userQuestion, question)[1]);
+      }
+    }
+    if (similarityList.some((element) => element >= 90)) {
+      const max = Math.max(...similarityList);
+      const index = similarityList.indexOf(max);
+      return data[index].botAnswer;
+    } else {
+      const indexList = [];
+      for (let i = 0; i < 3; i++) {
+        const max = Math.max(...similarityList);
+        const index = similarityList.indexOf(max);
+        indexList.push(index);
+        similarityList[index] = -1;
+      }
+      var text = "Pertanyaaan tidak ditemukan di database.\nApakah maksud Anda:\n";
+      for (let i = 0; i < 2; i++) {
+        text += `${i + 1}. ${data[indexList[i]].userQuestion}\n`;
+      }
+      text += `3. ${data[indexList[2]].userQuestion}`;
+      return text;
+    }
   }
-  // dst
 }
 
 export function calculator(question) {

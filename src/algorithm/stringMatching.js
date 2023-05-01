@@ -20,7 +20,7 @@ function computeFail(pattern) {
     return fail;
 }
 
-function kmpSearch(text, pattern) {
+export function kmpSearch(text, pattern) {
     let n = text.length;
     let m = pattern.length;
     let fail = computeFail(pattern);
@@ -57,7 +57,7 @@ function buildLast(pattern) {
     return last;
 }
 //Implementasi string machine dengan boyer Moore
-function bmSearch(text, pattern) {
+export function bmSearch(text, pattern) {
     var lengthText = text.length;
     var lengthPattern = pattern.length;
     var i = lengthPattern - 1;
@@ -83,7 +83,7 @@ function bmSearch(text, pattern) {
     return -1;
 }
 
-function computeLCS(str1, str2) {
+export function computeLCS(str1, str2) {
     let str1Len = str1.length;
     let str2Len = str2.length;
     let dpMatrix = [];
@@ -125,21 +125,21 @@ function computeLCS(str1, str2) {
 
     let lcsStr = lcsArr.join("");
     let similarityPercentage = (lcsStr.length * 200) / (str1Len + str2Len);
-    return [lcsStr, similarityPercentage.toFixed(2)];
+    return [lcsStr, parseFloat(similarityPercentage.toFixed(5))];
 }
 
-let text = [];
-text.push("Apa ibukota Indonesia?");
-text.push("Apa ibukota Italy?");
-text.push("Apa ibukota India?");
+// let text = [];
+// text.push("Apa ibukota Indonesia?");
+// text.push("Apa ibukota Italy?");
+// text.push("Apa ibukota India?");
 
-const pattern = "apa ibukota indo"
-let index = [];
+// const pattern = "ibukota indo"
+// let index = [];
 
-for (let i = 0; i < text.length; i++) {
-    console.log(computeLCS(text[i], pattern));
-    console.log(kmpSearch(text[i], pattern));
-    console.log(bmSearch(text[i], pattern));
-}
+// for (let i = 0; i < text.length; i++) {
+//     console.log(computeLCS(text[i], pattern));
+//     console.log(kmpSearch(text[i], pattern));
+//     console.log(bmSearch(text[i], pattern));
+// }
 
 // console.log(index);
