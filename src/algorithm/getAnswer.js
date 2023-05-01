@@ -3,7 +3,7 @@ import ENV from '../../config.env';
 import { useQuery } from "react-query";
 const { get } = require("mongoose");
 
-export async function getAnswer(question) {
+async function fetchQna() {
   console.log("fetching data...");
   let res = await fetch(`${ENV.BASE_URL}/qna`, {
     method: "GET",
@@ -14,12 +14,16 @@ export async function getAnswer(question) {
   console.log("response status:", res.status);
   let data = await res.json();
   
-  console.log("datalength: " + data.length);
+  
+  return data;
+}
+
+  // ini fungsi utamanya, harusnya regex di sini buat nentuin question fitur apa
+export async function getAnswer(question) {
+  const data = await fetchQna();
+  console.log("datalength from getAnswer: " + data.length);
   console.log("data:", data);
 
-
-// ini fungsi utamanya, harusnya regex di sini buat nentuin question fitur apa
-export function getAnswer(question) {
   const dateRegex = /^.*(\d{1,2})\/(\d{1,2})\/(\d{4}).*$/;
   const mathRegex = /^.*(\d+)(\s*)(\+|\-|\*|\/)(\s*)(\d+).*$/;
   const addQuestionRegex = /^Tambah pertanyaan \[([^\]]+)\] dengan jawaban \[([^\]]+)\]$/;
@@ -52,7 +56,6 @@ export function getAnswer(question) {
   else { // Masukin KMP sama BM pake database
     return "Undefined Question"
   }
-
   // dst
 }
 
