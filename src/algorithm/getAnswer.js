@@ -1,6 +1,21 @@
-// import { getQna } from "../../lib/request.js";
-
+import { getAllQna, getAllRooms } from "../../lib/request.js";
+import ENV from '../../config.env';
+import { useQuery } from "react-query";
 const { get } = require("mongoose");
+
+export async function getAnswer(question) {
+  console.log("fetching data...");
+  let res = await fetch(`${ENV.BASE_URL}/qna`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  console.log("response status:", res.status);
+  let data = await res.json();
+  
+  console.log("datalength: " + data.length);
+  console.log("data:", data);
 
 
 // ini fungsi utamanya, harusnya regex di sini buat nentuin question fitur apa
