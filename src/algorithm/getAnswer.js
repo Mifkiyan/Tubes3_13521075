@@ -4,7 +4,7 @@ const { get } = require("mongoose");
 
 
 // ini fungsi utamanya, harusnya regex di sini buat nentuin question fitur apa
-function getAnswer(question) {
+export function getAnswer(question) {
   const dateRegex = /^.*(\d{1,2})\/(\d{1,2})\/(\d{4}).*$/;
   const mathRegex = /^.*(\d+)(\s*)(\+|\-|\*|\/)(\s*)(\d+).*$/;
   const addQuestionRegex = /^Tambah pertanyaan \[([^\]]+)\] dengan jawaban \[([^\]]+)\]$/;
@@ -41,7 +41,7 @@ function getAnswer(question) {
   // dst
 }
 
-function calculator(question) {
+export function calculator(question) {
   try {
     // if theres a number followed by a space and another number, throw an error
     if (/[0-9]\s+[0-9]/.test(question)) {
@@ -146,7 +146,7 @@ function calculator(question) {
   }
 }
 
-function date(question) {
+export function date(question) {
   try {
     const dateRegex = /(\d{1,2})\/(\d{1,2})\/(\d{4})/;
     const match = question.match(dateRegex);
@@ -169,10 +169,6 @@ function date(question) {
     return error.message;
   }
 }
-
-// function addQuestiontoDatabase(question) {
-//   const
-// }
 
 // console.log(getAnswer('Apa ibukota Indonesia?'));
 // console.log(getAnswer('Apa mata kuliah IF semester 4 yang paling keos?'));
