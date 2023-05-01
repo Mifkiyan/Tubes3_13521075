@@ -4,7 +4,7 @@ import { useMutation, useQueryClient } from 'react-query'
 import { createRoom, deleteRoom } from '../../lib/request'
 import { useState } from 'react'
 
-var choosenOption = "KMP"
+export var choosenOption = "KMP"
 
 export default({ getRooms, handler }) => {
   const [selectedValue, setSelectedValue] = useState("KMP");
