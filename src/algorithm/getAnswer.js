@@ -58,44 +58,62 @@ export async function getAnswer(question) {
 
   // Fitur pertanyaan teks
   else {
+    const exactMatch = [];
+    const similarityList = [];
     if (choosenOption == "KMP") {
       console.log("KMP");
-      const similarityList = [];
       for (let i = 0; i < data.length; i++) {
         if (sm.kmpSearch(data[i].userQuestion, question) != -1 || sm.kmpSearch(question, data[i].userQuestion) != -1) {
-          return data[i].botAnswer;
+          exactMatch.push(i);
         }
         similarityList.push(sm.computeLCS(data[i].userQuestion, question)[1]);
       }
     }
     else if (choosenOption == "BM") {
       console.log("BM");
-      const similarityList = [];
       for (let i = 0; i < data.length; i++) {
         if (sm.bmSearch(data[i].userQuestion, question) != -1 || sm.bmSearch(question, data[i].userQuestion) != -1) {
-          return data[i].botAnswer;
+          exactMatch.push(i);
         }
         similarityList.push(sm.computeLCS(data[i].userQuestion, question)[1]);
       }
     }
+    if (exactMatch.length == 1) {
+      return data[exactMatch[0]].botAnswer;
+    }
+    else if (exactMatch.length > 1) {
+      maxExactMatch = exactMatch[0];
+      for (let i = 1; i < exactMatch.length; i++) {
+        if (similarityList[exactMatch[i]] > similarityList[maxExactMatch]) {
+          maxExactMatch = exactMatch[i];
+        }
+      }
+      return data[maxExactMatch].botAnswer;
+    }
+
     if (similarityList.some((element) => element >= 90)) {
       const max = Math.max(...similarityList);
       const index = similarityList.indexOf(max);
       return data[index].botAnswer;
-    } else {
+    }
+    else if (similarityList.some((element) => element >= 70 && element < 90)) {
       const indexList = [];
       for (let i = 0; i < 3; i++) {
         const max = Math.max(...similarityList);
-        const index = similarityList.indexOf(max);
-        indexList.push(index);
-        similarityList[index] = -1;
+        if (max >= 70) {
+          const index = similarityList.indexOf(max);
+          indexList.push(index);
+          similarityList[index] = -1;
+        }
       }
-      var text = "Pertanyaaan tidak ditemukan di database.\nApakah maksud Anda:\n";
-      for (let i = 0; i < 2; i++) {
+      var text = "Pertanyaan tidak ditemukan di database.\nApakah maksud Anda:\n";
+      for (let i = 0; i < indexList.length; i++) {
         text += `${i + 1}. ${data[indexList[i]].userQuestion}\n`;
       }
-      text += `3. ${data[indexList[2]].userQuestion}`;
       return text;
+    }
+    else {
+      return "Pertanyaan tidak dapat diproses";
     }
   }
 }
@@ -180,7 +198,7 @@ export function calculator(question) {
 
       // If the character is not a digit, opening parenthesis, closing parenthesis, or operator, throw an error
       else {
-        throw new Error(`Unexpected character "${char}"`);
+        throw new Error('Pertanyaan tidak dapat diproses');
       }
     }
 
