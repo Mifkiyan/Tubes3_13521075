@@ -1,5 +1,6 @@
 import { getAllQna, getAllRooms } from "../../lib/request.js";
 import ENV from '../../config.env';
+import { choosenOption } from "../components/sidebar.js";
 import { useQuery } from "react-query";
 const { get } = require("mongoose");
 
@@ -34,6 +35,14 @@ export async function getAnswer(question) {
   const isMath = mathRegex.test(question);
   const isAddQuestion = addQuestionRegex.test(question);
   const isDeleteQuestion = deleteQuestionRegex.test(question);
+
+  // ini buat dapetin choosenOption dari sidebar 
+  // if (choosenOption == "KMP") {
+  //   console.log("KMP");
+  // } else if (choosenOption == "BM") {
+  //   console.log("BM");
+  // }
+
   if (isDate) {
     return date(question);
   }

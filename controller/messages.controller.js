@@ -36,7 +36,7 @@ export async function createChat(req, res) {
   }
 
   const rooms = await Room.findOne({ _id: roomid });
-  const newAnswer = getAnswer(question);
+  const newAnswer = await getAnswer(question);
   if (!rooms) {
     return res.status(400).json({error: "room not found"});
   }

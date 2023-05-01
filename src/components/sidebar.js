@@ -3,8 +3,17 @@ import { BiTrash } from "react-icons/bi";
 import { useMutation, useQueryClient } from 'react-query'
 import { createRoom, deleteRoom } from '../../lib/request'
 
+var choosenOption = "KMP"
+
 export default({ getRooms, handler }) => {
-  
+  const [selectedValue, setSelectedValue] = useState("KMP");
+
+  const handleChange = (event) => {
+    setSelectedValue(event.target.value);
+    choosenOption = event.target.value;
+    console.log(choosenOption);
+  };
+
   const queryClient = useQueryClient();
   const createMutate = useMutation(createRoom, {
     onSuccess: () => {
@@ -47,10 +56,7 @@ export default({ getRooms, handler }) => {
             )
           })
         }
-        
-
       </div>
-      
 
       <div className={styles.lowerside}>
         <div>
@@ -58,12 +64,12 @@ export default({ getRooms, handler }) => {
         </div>
 
         <div className={styles.option}>
-          <input type="radio" value="KMP" id="kmp"/>
+          <input name="options" type="radio" value="KMP" id="kmp" checked = {selectedValue === "KMP"} onChange={handleChange}/>
           <label for="kmp">KMP</label>
         </div>
 
         <div className={styles.option}>
-          <input type="radio" value="BM" id="bm"/>
+          <input name="options" type="radio" value="BM" id="bm" checked = {selectedValue === "BM"} onChange={handleChange}/>
           <label for="bm">BM</label>
         </div>
       </div>
