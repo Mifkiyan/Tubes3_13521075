@@ -3,16 +3,22 @@ import { BiTrash } from "react-icons/bi";
 import { useMutation, useQueryClient } from 'react-query'
 import { createRoom, deleteRoom } from '../../lib/request'
 import { useState } from 'react'
+import { useSelector, useDispatch } from 'react-redux';
+import { optionChangeAction } from '../../redux/reducer';
 
-export var choosenOption = "KMP"
 
 export default({ getRooms, handler }) => {
+
   const [selectedValue, setSelectedValue] = useState("KMP");
+
+  // const state = useSelector((state) => state.app.client.chosenOption);
+  const dispatch = useDispatch();
 
   const handleChange = (event) => {
     setSelectedValue(event.target.value);
-    choosenOption = event.target.value;
-    console.log(choosenOption);
+    dispatch(optionChangeAction(event.target.value));
+    console.log("test" + event.target.value);
+    // console.log(state);
   };
 
   const queryClient = useQueryClient();

@@ -1,53 +1,86 @@
 import Qna from "../models/qna.model.js";
 
-export async function getQna(req, res) {
+export async function getQna() {
   try {
     const qna = await Qna.find({});
 
-    if (!qna) {
-      res.status(400).json({error: "QNA NOT FOUND"});
-    }
-    res.status(200).json(qna);
+    // if (!qna) {
+    //   res.status(400).json({error: "QNA NOT FOUND"});
+    // }
+    // res.status(200).json(qna);
+    return qna; 
   } catch (error) {
     res.status(400).json({error: "ERROR GETTING QNA"});
   }
 }
 
-export async function createQna(req, res) {
+export async function createQna(question, answer) {
   try {
-    const { userQuestion, botAnswer } = req.body;
-
-    if(!userQuestion && !botAnswer) {
-      return res.status(400).json({error: "INVALID FORM QNA DATA"})
-    }
-
     const qna = new Qna({
-      userQuestion,
-      botAnswer
+      userQuestion : question,
+      botAnswer : answer
     })
-
     await qna.save();
 
-    return res.status(200).json({data: qna});
+    return "pertanyaan berhasil ditambahkan";
       
   } catch (error) {
-    return res.status(400).json({error: "ERROR CREATING QNA"});
+    return "pertanyaan gagal ditambahkan";
   }
 }
 
-export async function deleteQna(req, res) {
+export async function deleteQna(question) {
   try {
-    const { id } = req.query;
+    await Qna.findOneAndDelete(
+      { userQuestion: question }
+    );
 
-    if(!id) {
-      return res.status(400).json({error: "NO QNA ID PROVIDED"})
-    }
-
-    await Qna.findByIdAndDelete(id);
-
-    return res.status(200).json({deleted: id});
+    return "Pertanyaan berhasil dihapus";
       
   } catch (error) {
-    return res.status(400).json({error: "ERROR DELETING QNA"});
+    return "Pertanyaan gagal dihapus";
+  }
+}
+
+//to update the Qna
+export async function updateQna(questionToAdd, answer) {
+  try {
+    const qna = await Qna.findOneAndUpdate(
+      { userQuestion: questionToAdd }, 
+      { $set: {botAnswer: answer} }
+    );
+    return "Pertanyaan berhasil diupdate";
+  } catch (error) {
+    return "Pertanyaan gagal diupdate";
+  }
+}
+
+
+export async function getQnaID (req,res) {
+  try {
+    const { qnaid } = req.query;
+    if (qnaid) {
+      const qna = await Qna.findById(qnaid);
+      res.status(200).json(qna);
+    }
+    res.status(400).json({error: "NO QNA ID PROVIDED"});
+  } catch (error) {
+    res.status(400).json({error: "ERROR GETTING QNA ID"});
+  }
+}
+
+export async function updateQnaID (req, res) {
+  try {
+    const { qnaid } = req.query;
+    const updateData = req.body;
+
+    if (updateData) {
+      const qna = await Qna.findByIdAndUpdate(qnaid, updateData);
+      res.status(200).json(qna);
+    }
+    res.status(400).json({error: "NO QNA ID PROVIDED"});
+
+  } catch (error) {
+    res.status(400).json({error: "ERROR UPDATING QNA"});
   }
 }

@@ -1,31 +1,16 @@
-import { getAllQna, getAllRooms } from "../../lib/request.js";
-import ENV from '../../config.env';
-import { choosenOption } from "../components/sidebar.js";
-import { useQuery } from "react-query";
-const { get } = require("mongoose");
-
+import Qna from "../../models/qna.model.js";
+import { useSelector } from "react-redux";
+import { updateQna, createQna, deleteQna, getQna } from "../../controller/qna.controller.js";
 import * as sm from "./stringMatching.js";
 
-async function fetchQna() {
-  console.log("fetching data...");
-  let res = await fetch(`${ENV.BASE_URL}/qna`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-  console.log("response status:", res.status);
-  let data = await res.json();
-
-
-  return data;
-}
-
 // ini fungsi utamanya, harusnya regex di sini buat nentuin question fitur apa
-export async function getAnswer(question) {
-  const data = await fetchQna();
-  console.log("datalength from getAnswer: " + data.length);
-  console.log("data:", data);
+export async function getAnswer(question, option) {
+  // const data = fetchQna();
+  const data = await getQna();
+  data.then((result) => {
+    console.log(result); //masigeth dalam bentuk Promise(?) jadi harus diubah dulu tapi gatau gmn wkwkw
+  });
+  console.log(option);
 
   const dateRegex = /^.*(\d{1,2})\/(\d{1,2})\/(\d{4}).*$/;
   const mathRegex = /^.*(\d+)(\s*)(\+|\-|\*|\/)(\s*)(\d+).*$/;
@@ -48,7 +33,7 @@ export async function getAnswer(question) {
   if (isAddQuestion) {
     const questionToAdd = question.match(addQuestionRegex)[1];
     const answer = question.match(addQuestionRegex)[2];
-    return addQuestiontoDatabase(questionToAdd, answer); // sesuaiin sama fungsinya
+    return addQuestiontoDatabase(questionToAdd, answer); 
   }
 
   if (isDeleteQuestion) {
@@ -60,8 +45,7 @@ export async function getAnswer(question) {
   else {
     const exactMatch = [];
     const similarityList = [];
-    if (choosenOption == "KMP") {
-      console.log("KMP");
+    if (option == "KMP") {
       for (let i = 0; i < data.length; i++) {
         if (sm.kmpSearch(data[i].userQuestion, question) != -1 || sm.kmpSearch(question, data[i].userQuestion) != -1) {
           exactMatch.push(i);
@@ -69,8 +53,7 @@ export async function getAnswer(question) {
         similarityList.push(sm.computeLCS(data[i].userQuestion, question)[1]);
       }
     }
-    else if (choosenOption == "BM") {
-      console.log("BM");
+    else if (option == "BM") {
       for (let i = 0; i < data.length; i++) {
         if (sm.bmSearch(data[i].userQuestion, question) != -1 || sm.bmSearch(question, data[i].userQuestion) != -1) {
           exactMatch.push(i);
@@ -116,6 +99,37 @@ export async function getAnswer(question) {
       return "Pertanyaan tidak dapat diproses";
     }
   }
+}
+
+// async function fetchQna() {
+//   console.log("fetching data...");
+//   let res = await fetch(`${ENV.BASE_URL}/qna`, {
+//     method: "GET",
+//     headers: {
+//       "Content-Type": "application/json",
+//     },
+//   });
+//   console.log("response status:", res.status);
+//   let data = await res.json();
+//   return data;
+// }
+
+async function addQuestiontoDatabase(questionToAdd, answer) {
+  const existingQuestion = await Qna.findOne({ userQuestion: questionToAdd });
+  if (existingQuestion) {
+    const sameAnswer = await Qna.findOne({ userQuestion: questionToAdd, botAnswer: answer });
+    if (sameAnswer) {
+      return "Pertanyaan dan jawaban sudah ada di database";
+    } else {
+      return updateQna(questionToAdd, answer);
+    }
+  } else {
+    return createQna(questionToAdd, answer);
+  }
+}
+
+export function deleteQuestiontoDatabase(questionToDel) {
+  deleteQna(questionToDel);
 }
 
 export function calculator(question) {

@@ -1,22 +1,16 @@
 import connect  from "../../../../database/conn";
-import { getQna, createQna, deleteQna, updateQna } from "../../../../controller/qna.controller";
+import { getQnaID, updateQnaID, deleteQnaID } from "../../../../controller/qna.controller";
 
 export default async function handler(req, res) {
   connect().catch((err) => res.status(400).json({error: "DATABASE ERROR"}));
 
-
-  switch (req.method) {
+  const { method } = req;
+  switch(method) {
     case "GET":
-      await getQna(req, res);
-      break;
-    case "POST":
-      await createQna(req, res);
+      getQnaID(req, res);
       break;
     case "PUT":
-      await updateQna(req, res);
-      break;
-    case "DELETE":
-      await deleteQna(req, res);
+      updateQnaID(req, res);
       break;
     default:
       res.setHeader("Allow", ["GET", "POST", "PUT", "DELETE"]); 

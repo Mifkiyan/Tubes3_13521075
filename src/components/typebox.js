@@ -2,10 +2,11 @@ import { useState } from 'react'
 import { BiSend } from 'react-icons/bi'
 import { useMutation, useQueryClient } from 'react-query'
 import { sendMessage } from '../../lib/request'
+import { useSelector } from 'react-redux'
 import styles from '../styles/typebox.module.css'
 
 export default ({ roomid }) => { 
-
+  const chosenOption = useSelector((state) => state.app.client.chosenOption);
   const [search, setSearch] = useState('')
   const queryClient = useQueryClient();
 
@@ -19,7 +20,7 @@ export default ({ roomid }) => {
 
   function onSubmit(event) {
     event.preventDefault()
-    mutation.mutate({roomid, message: search})
+    mutation.mutate({roomid, message: search, option: chosenOption})
     setSearch('')
   }
 

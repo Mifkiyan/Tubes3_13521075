@@ -25,7 +25,7 @@ export async function getChat(req, res) {
 
 export async function createChat(req, res) {
   const { roomid } = req.query;
-  const { question, answer }  = req.body;
+  const { question, answer, chosenOption }  = req.body;
 
   if (!roomid) {
     return res.status(400).json({error: "room id not found"});
@@ -36,7 +36,7 @@ export async function createChat(req, res) {
   }
 
   const rooms = await Room.findOne({ _id: roomid });
-  const newAnswer = await getAnswer(question);
+  const newAnswer = await getAnswer(question, chosenOption);
   if (!rooms) {
     return res.status(400).json({error: "room not found"});
   }
