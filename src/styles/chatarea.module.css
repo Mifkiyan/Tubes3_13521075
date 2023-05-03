@@ -93,9 +93,44 @@
   font-family: 'Inter';
   font-style: normal;
   font-weight: 500;
-  font-size: 1.3333vw;
+  padding-top: 5vw;
+  font-size: 1.8667vw;
   line-height: 1.3333vw;
   text-align: center;
   color: #FFFFFF;
   margin: auto;
+  width: 100%;
+}
+
+.emptychat {
+}
+
+.invited {
+  font-family: 'Inter';
+  font-style: normal;
+  font-size: 0.8vw;
+  background-color: #282935;;
+  color: white;
+  text-align: center;
+  margin-right: auto;
+  margin-left: auto;
+  padding: 0.5vw;
+  height: 1vw;
+  border-radius: 1.3333vw;
+  padding-right: 1vw;
+  padding-left: 1vw;
+  margin-top: 1vw;
+}
+
+.invtxt {
+  font-family: 'Inter';
+  font-style: normal;
+  color: #FFFFFF;
+  margin: auto;
+  /* padding: 0.5vw; */
+}
+
+.paragraph {
+  font-size: 1.0667vw;
+  font-weight: 0;
 }

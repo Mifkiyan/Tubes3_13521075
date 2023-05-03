@@ -4,7 +4,8 @@ export default () => {
   return (
     <div className={styles.chatArea}>
       <div className={styles.welcome}>
-        <h1>WELCOME!</h1>
+        <p>Ask Anything, Anytime!</p>
+        <p className={styles.paragraph}>Let's create a new chat.</p>
       </div>
     </div>
   )

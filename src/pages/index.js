@@ -38,7 +38,7 @@ export default function Home() {
           </div>
           <div className= {styles.groupTitle}>
             <div className = {styles.title}>TUBES 3 STIMA</div>
-            <div className = {styles.members}>Shelma, Febryan, Rifko</div>
+            <div className = {styles.members}>You, Shelma, Febryan, Rifko</div>
           </div>
         </div>
         {

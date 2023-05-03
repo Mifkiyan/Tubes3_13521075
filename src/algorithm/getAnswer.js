@@ -6,7 +6,7 @@ import * as sm from "./stringMatching.js";
 // ini fungsi utamanya, harusnya regex di sini buat nentuin question fitur apa
 export async function getAnswer(question, option) {
   // const data = fetchQna();
-  const data = await getQna();
+  const data = getQna();
   data.then((result) => {
     console.log(result); //masigeth dalam bentuk Promise(?) jadi harus diubah dulu tapi gatau gmn wkwkw
   });

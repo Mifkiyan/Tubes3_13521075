@@ -11,10 +11,12 @@ export async function getAllRooms(req, res) {
 
 export async function createRoom(req, res) {
     try {
+        const currentDate = new Date();
+        const dateTimeString = currentDate.toLocaleString();
 
         const len = await (await Room.find({})).length;
         const defaultRoom = {
-            name: `Room ${len + 1}`,
+            name: `${dateTimeString}`,
             messages: []
         }
 

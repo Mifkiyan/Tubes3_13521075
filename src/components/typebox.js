@@ -24,7 +24,14 @@ export default ({ roomid }) => {
     setSearch('')
   }
 
-  if (mutation.isLoading) return <div>Loading...</div>
+  if (mutation.isLoading) {
+    return (
+      <form className={styles.chatbox} onSubmit={onSubmit}>
+        <input  className={styles.inputchat} type="text" placeholder="TYPE A MESSAGE..."/>
+        <button className={styles.sendbtn} type="submit" ><BiSend/></button>
+      </form>
+    )
+  }
 
   return (
     <form className={styles.chatbox} onSubmit={onSubmit}>
