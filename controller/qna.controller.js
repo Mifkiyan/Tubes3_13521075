@@ -22,10 +22,10 @@ export async function createQna(question, answer) {
     })
     await qna.save();
 
-    return "pertanyaan berhasil ditambahkan";
+    return "Pertanyaan [" + question + "] berhasil ditambahkan";
       
   } catch (error) {
-    return "pertanyaan gagal ditambahkan";
+    return "Pertanyaan [" + question + "] gagal ditambahkan";
   }
 }
 
@@ -35,10 +35,10 @@ export async function deleteQna(question) {
       { userQuestion: question }
     );
 
-    return "Pertanyaan berhasil dihapus";
+    return "Pertanyaan [" + question + "] berhasil dihapus";
       
   } catch (error) {
-    return "Pertanyaan gagal dihapus";
+    return "Tidak ada pertanyaan [" + question + "] di database";
   }
 }
 
@@ -49,9 +49,9 @@ export async function updateQna(questionToAdd, answer) {
       { userQuestion: questionToAdd }, 
       { $set: {botAnswer: answer} }
     );
-    return "Pertanyaan berhasil diupdate";
+    return "Pertanyaan [" + questionToAdd + "] berhasil diupdate dengan jawaban [" + answer + "]";
   } catch (error) {
-    return "Pertanyaan gagal diupdate";
+    return "Pertanyaan [" + questionToAdd + "] gagal diupdate";
   }
 }
 

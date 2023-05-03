@@ -6,11 +6,13 @@ import * as sm from "./stringMatching.js";
 // ini fungsi utamanya, harusnya regex di sini buat nentuin question fitur apa
 export async function getAnswer(question, option) {
   // const data = fetchQna();
-  const data = getQna();
-  data.then((result) => {
-    console.log(result); //masigeth dalam bentuk Promise(?) jadi harus diubah dulu tapi gatau gmn wkwkw
-  });
+  const data = await getQna();
+  // data.then((result) => {
+  //   console.log(result); //masigeth dalam bentuk Promise(?) jadi harus diubah dulu tapi gatau gmn wkwkw
+  // });
+  // buat debugging
   console.log(option);
+  console.log(data);
 
   const dateRegex = /^.*(\d{1,2})\/(\d{1,2})\/(\d{4}).*$/;
   const mathRegex = /^.*(\d+)(\s*)(\+|\-|\*|\/)(\s*)(\d+).*$/;
@@ -33,12 +35,12 @@ export async function getAnswer(question, option) {
   if (isAddQuestion) {
     const questionToAdd = question.match(addQuestionRegex)[1];
     const answer = question.match(addQuestionRegex)[2];
-    return addQuestiontoDatabase(questionToAdd, answer); 
+    return addQuestiontoDatabase(option, data, questionToAdd, answer); 
   }
 
   if (isDeleteQuestion) {
     const questionToDel = question.match(deleteQuestionRegex)[1];
-    return deleteQuestiontoDatabase(questionToDel); // sesuaiin sama fungsinya
+    return deleteQuestiontoDatabase(option, data, questionToDel);
   }
 
   // Fitur pertanyaan teks
@@ -65,7 +67,7 @@ export async function getAnswer(question, option) {
       return data[exactMatch[0]].botAnswer;
     }
     else if (exactMatch.length > 1) {
-      maxExactMatch = exactMatch[0];
+      let maxExactMatch = exactMatch[0];
       for (let i = 1; i < exactMatch.length; i++) {
         if (similarityList[exactMatch[i]] > similarityList[maxExactMatch]) {
           maxExactMatch = exactMatch[i];
@@ -114,22 +116,52 @@ export async function getAnswer(question, option) {
 //   return data;
 // }
 
-async function addQuestiontoDatabase(questionToAdd, answer) {
-  const existingQuestion = await Qna.findOne({ userQuestion: questionToAdd });
-  if (existingQuestion) {
-    const sameAnswer = await Qna.findOne({ userQuestion: questionToAdd, botAnswer: answer });
-    if (sameAnswer) {
-      return "Pertanyaan dan jawaban sudah ada di database";
-    } else {
-      return updateQna(questionToAdd, answer);
+async function addQuestiontoDatabase(option, data, questionToAdd, answer) {
+  if (option == "KMP") {
+    for (let i = 0; i < data.length; i++) {
+      if (sm.kmpSearch(data[i].userQuestion, questionToAdd) != -1 || sm.kmpSearch(questionToAdd, data[i].userQuestion) != -1) {
+        const sameAnswer = await Qna.findOne({ userQuestion: data[i].userQuestion, botAnswer: answer });
+        if (sameAnswer) {
+          return "Pertanyaan " + questionToAdd + " dengan jawaban yang sama sudah ada di database";
+        } else {
+          return updateQna(data[i].userQuestion, answer);
+        }
+      }
     }
-  } else {
+    return createQna(questionToAdd, answer);
+  }
+  else if (option == "BM") {
+    for (let i = 0; i < data.length; i++) {
+      if (sm.bmSearch(data[i].userQuestion, questionToAdd) != -1 || sm.bmSearch(questionToAdd, data[i].userQuestion) != -1) {
+        const sameAnswer = await Qna.findOne({ userQuestion: data[i].userQuestion, botAnswer: answer });
+        if (sameAnswer) {
+          return "Pertanyaan " + questionToAdd + " dengan jawaban yang sama sudah ada di database";
+        } else {
+          return updateQna(data[i].userQuestion, answer);
+        }
+      }
+    }
     return createQna(questionToAdd, answer);
   }
 }
 
-export function deleteQuestiontoDatabase(questionToDel) {
-  deleteQna(questionToDel);
+export function deleteQuestiontoDatabase(option, data, questionToDel) {
+  if (option == "KMP") {
+    for (let i = 0; i < data.length; i++) {
+      if (sm.kmpSearch(data[i].userQuestion, questionToDel) != -1 || sm.kmpSearch(questionToDel, data[i].userQuestion) != -1) {
+        return deleteQna(data[i].userQuestion);
+      }
+    }
+    return "Tidak ada pertanyaan [" + questionToDel + "] di database";
+  }
+  else if (option == "BM") {
+    for (let i = 0; i < data.length; i++) {
+      if (sm.bmSearch(data[i].userQuestion, questionToDel) != -1 || sm.bmSearch(questionToDel, data[i].userQuestion) != -1) {
+        return deleteQna(data[i].userQuestion);
+      }
+    }
+    return "Tidak ada pertanyaan [" + questionToDel + "] di database";
+  }
 }
 
 export function calculator(question) {
