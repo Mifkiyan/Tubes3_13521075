@@ -151,6 +151,8 @@ export function calculator(question) {
   try {
     // Remove any whitespace 
     question = question.replace(/\s/g, '');
+    const expressionRegex = /[0-9()+\-*/].*[0-9()+\-*/]/;
+    const expression = question.match(expressionRegex)[0];
 
     const stack = [];
 
@@ -193,14 +195,14 @@ export function calculator(question) {
     const output = [];
     const opStack = [];
 
-    for (let i = 0; i < question.length; i++) {
-      const char = question[i];
+    for (let i = 0; i < expression.length; i++) {
+      const char = expression[i];
 
       // jika character adalah digit, masukkan ke output queue
       if (/\d/.test(char)) {
         let num = char;
-        while (i < question.length - 1 && /\d/.test(question[i + 1])) {
-          num += question[++i];
+        while (i < expression.length - 1 && /\d/.test(expression[i + 1])) {
+          num += expression[++i];
         }
         output.push(Number(num));
       }
