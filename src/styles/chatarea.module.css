@@ -7,6 +7,7 @@
   overflow: auto;
   display: inline-block;
   padding-bottom: 1vw;
+  overflow-wrap: break-word;
   
 }
 
@@ -24,6 +25,7 @@
   margin-left: auto;
   filter: drop-shadow(.2vw .2667vw .2667vw rgba(0, 0, 0, 0.1));
   color: white;
+  
 }
 
 .chatUserContent {
