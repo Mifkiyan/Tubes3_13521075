@@ -7,7 +7,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { optionChangeAction } from '../../redux/reducer';
 
 
-export default({ getRooms, handler }) => {
+export default function Sidebar({ getRooms, handler })  {
 
   const [selectedValue, setSelectedValue] = useState("KMP");
 

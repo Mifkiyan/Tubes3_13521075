@@ -1,7 +1,7 @@
 import styles from '../styles/general.module.css';
 import Image from 'next/image'
 
-export default () => {
+export default function Loading()  {
   return (
     <div className={styles.loadingPage}>
       <h1 className={styles.loading}>Loading</h1>
@@ -11,7 +11,7 @@ export default () => {
         width={70}
         height={70}
       />
-      <p className={styles.textloading}>Sit Tight: We're Getting Things Ready for You</p>
+      <p className={styles.textloading}>Sit Tight: We&apos;re Getting Things Ready for You</p>
       
     </div>
   )

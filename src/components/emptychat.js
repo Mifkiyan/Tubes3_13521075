@@ -1,6 +1,6 @@
 import styles from '../styles/chatarea.module.css'
 
-export default () => {
+export default function Emptychat()  {
   return (
     <div className={styles.chatArea}>
       <div className={styles.emptychat}>

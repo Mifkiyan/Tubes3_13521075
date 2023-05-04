@@ -5,7 +5,7 @@ import Emptychat from './emptychat'
 import { useQuery } from 'react-query'
 import { getMessages } from '../../lib/request'
 
-export default ({ roomid }) => {
+export default function Chatarea({ roomid }) {
 
   const {isLoading, isError, data: messages, error} = useQuery(["messages", roomid], () => getMessages(roomid));
 

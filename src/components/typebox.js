@@ -5,7 +5,7 @@ import { sendMessage } from '../../lib/request'
 import { useSelector } from 'react-redux'
 import styles from '../styles/typebox.module.css'
 
-export default ({ roomid }) => { 
+export default function Typebox({ roomid })  { 
   const chosenOption = useSelector((state) => state.app.client.chosenOption);
   const [search, setSearch] = useState('')
   const queryClient = useQueryClient();

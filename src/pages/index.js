@@ -34,7 +34,7 @@ export default function Home() {
       <div className={styles.body}>
         <div className={styles.header}>
           <div className={styles.iconContainer}>
-            <Image src='/Profiles.png' width={85} height={35}/>
+            <Image src='/Profiles.png' alt="profiles" width={85} height={35}/>
           </div>
           <div className= {styles.groupTitle}>
             <div className = {styles.title}>TUBES 3 STIMA</div>
