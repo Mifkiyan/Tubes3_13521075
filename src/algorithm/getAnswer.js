@@ -11,7 +11,7 @@ export async function getAnswer(question, option) {
   console.log(data);
 
   const dateRegex = /^.*(\d{1,2})\/(\d{1,2})\/(\d{4}).*$/;
-  const mathRegex = /^.*(\d+)(\s*)(\+|\-|\*|\/)(\s*)(\d+).*$/;
+  const mathRegex = /^.*(\d+\.\d+|\d+)(\s*)(\+|\-|\*|\/)(\s*)(\d+\.\d+|\d+).*$/;
   const addQuestionRegex = /^Tambah pertanyaan \[([^\]]+)\] dengan jawaban \[([^\]]+)\]$/i;
   const deleteQuestionRegex = /^Hapus pertanyaan \[([^\]]+)\]$/i;
 
@@ -94,7 +94,7 @@ export async function getAnswer(question, option) {
       return text;
     }
     else {
-      return "Pertanyaan tidak dapat diproses";
+      return "Pertanyaan tidak dapat diproses (regex)";
     }
   }
 }
@@ -151,7 +151,7 @@ export function calculator(question) {
   try {
     // Remove any whitespace 
     question = question.replace(/\s/g, '');
-    const expressionRegex = /[0-9()+\-*/].*[0-9()+\-*/]/;
+    const expressionRegex =/^.*(\d+\.\d+|\d+)(\s*)(\+|\-|\*|\/)(\s*)((\+|\-)?(\d+\.\d+|\d+)).*$/;
     const expression = question.match(expressionRegex)[0];
 
     const stack = [];
@@ -199,9 +199,9 @@ export function calculator(question) {
       const char = expression[i];
 
       // jika character adalah digit, masukkan ke output queue
-      if (/\d/.test(char)) {
+      if (/\d/.test(char) || char === '.' || (char === '-' && i === 0 && /\d/.test(expression[i + 1]))) {
         let num = char;
-        while (i < expression.length - 1 && /\d/.test(expression[i + 1])) {
+        while (i < expression.length - 1 && (/\d/.test(expression[i + 1]) || expression[i + 1] === '.') ) {
           num += expression[++i];
         }
         output.push(Number(num));
@@ -230,7 +230,7 @@ export function calculator(question) {
 
       // jika character bukan digit, operator, kurung buka, atau kurung tutup, throw error
       else {
-        throw new Error('Pertanyaan tidak dapat diproses');
+        throw new Error('Kalkulatornya rusak :(');
       }
     }
 
