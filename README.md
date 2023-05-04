@@ -1,7 +1,7 @@
 # Tubes Stima 3
 A simple ChatGPT application utilizing Knuth-Morris-Pratt (KMP) and Boyer-Moore (BM) string matching algorithms.
 
-![screenshot](assets\Screenshot.png)
+![screenshot](./assets/Screenshot.png)
 
 
 ## Table of Contents
