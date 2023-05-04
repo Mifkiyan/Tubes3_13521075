@@ -5,19 +5,15 @@ import * as sm from "./stringMatching.js";
 
 // ini fungsi utamanya, harusnya regex di sini buat nentuin question fitur apa
 export async function getAnswer(question, option) {
-  // const data = fetchQna();
   const data = await getQna();
-  // data.then((result) => {
-  //   console.log(result); //masigeth dalam bentuk Promise(?) jadi harus diubah dulu tapi gatau gmn wkwkw
-  // });
   // buat debugging
   console.log(option);
   console.log(data);
 
   const dateRegex = /^.*(\d{1,2})\/(\d{1,2})\/(\d{4}).*$/;
   const mathRegex = /^.*(\d+)(\s*)(\+|\-|\*|\/)(\s*)(\d+).*$/;
-  const addQuestionRegex = /^Tambah pertanyaan \[([^\]]+)\] dengan jawaban \[([^\]]+)\]$/;
-  const deleteQuestionRegex = /^Hapus pertanyaan \[([^\]]+)\]$/;
+  const addQuestionRegex = /^Tambah pertanyaan \[([^\]]+)\] dengan jawaban \[([^\]]+)\]$/i;
+  const deleteQuestionRegex = /^Hapus pertanyaan \[([^\]]+)\]$/i;
 
   const isDate = dateRegex.test(question);
   const isMath = mathRegex.test(question);
@@ -103,19 +99,6 @@ export async function getAnswer(question, option) {
   }
 }
 
-// async function fetchQna() {
-//   console.log("fetching data...");
-//   let res = await fetch(`${ENV.BASE_URL}/qna`, {
-//     method: "GET",
-//     headers: {
-//       "Content-Type": "application/json",
-//     },
-//   });
-//   console.log("response status:", res.status);
-//   let data = await res.json();
-//   return data;
-// }
-
 async function addQuestiontoDatabase(option, data, questionToAdd, answer) {
   if (option == "KMP") {
     for (let i = 0; i < data.length; i++) {
@@ -166,108 +149,114 @@ export function deleteQuestiontoDatabase(option, data, questionToDel) {
 
 export function calculator(question) {
   try {
-    // if theres a number followed by a space and another number, throw an error
-    if (/[0-9]\s+[0-9]/.test(question)) {
-      throw new Error('Sintaks persamaan tidak sesuai');
-    }
-
-    // Remove any whitespace from the expression
+    // Remove any whitespace 
     question = question.replace(/\s/g, '');
 
-    // cut the expression to only contain numbers and operators
-    const expressionRegex = /[0-9()+\-*/].*[0-9()+\-*/]/;
-    const expression = question.match(expressionRegex)[0];
+    const stack = [];
 
-    // Initialize the stack for numbers and operators
-    const numStack = [];
-    const opStack = [];
-
-    // Define a function to perform the calculation of two numbers and an operator
-    function calculate() {
-      const num2 = numStack.pop();
-      const num1 = numStack.pop();
-      const op = opStack.pop();
+    function calculate(op) {
+      const num2 = stack.pop();
+      const num1 = stack.pop();
 
       switch (op) {
         case '+':
-          numStack.push(num1 + num2);
+          stack.push(num1 + num2);
           break;
         case '-':
-          numStack.push(num1 - num2);
+          stack.push(num1 - num2);
           break;
         case '*':
-          numStack.push(num1 * num2);
+          stack.push(num1 * num2);
           break;
         case '/':
-          numStack.push(num1 / num2);
+          if (num2 === 0) {
+            throw new Error('Pembagian dengan nol tidak terdefinisi');
+          }
+          stack.push(num1 / num2);
           break;
       }
     }
 
-    // Iterate over each character in the expression
-    for (let i = 0; i < expression.length; i++) {
-      const char = expression[i];
+    function precedence(op) {
+      switch (op) {
+        case '+':
+        case '-':
+          return 1;
+        case '*':
+        case '/':
+          return 2;
+        default:
+          return 0;
+      }
+    }
 
-      // If the character is a digit, add it to the current number being parsed
+    const output = [];
+    const opStack = [];
+
+    for (let i = 0; i < question.length; i++) {
+      const char = question[i];
+
+      // jika character adalah digit, masukkan ke output queue
       if (/\d/.test(char)) {
         let num = char;
-        while (i < expression.length - 1 && /\d/.test(expression[i + 1])) {
-          num += expression[++i];
+        while (i < question.length - 1 && /\d/.test(question[i + 1])) {
+          num += question[++i];
         }
-        numStack.push(Number(num));
+        output.push(Number(num));
       }
 
-      // If the character is an opening parenthesis, push it onto the operator stack
+      // jika character adalah operator, re-assign operator yang lebih tinggi precedencenya ke output queue
+      else if (/[+\-*/]/.test(char)) {
+        while (opStack.length > 0 && precedence(opStack[opStack.length - 1]) >= precedence(char)) {
+          output.push(opStack.pop());
+        }
+        opStack.push(char);
+      }
+
+      // jika character adalah kurung buka, masukkan ke operator stack
       else if (char === '(') {
         opStack.push(char);
       }
 
-      // If the character is a closing parenthesis, perform calculations until the matching opening parenthesis is found
+      // jika character adalah kurung tutup, masukkan operator stack ke output queue sampai menemukan kurung buka
       else if (char === ')') {
         while (opStack[opStack.length - 1] !== '(') {
-          calculate();
+          output.push(opStack.pop());
         }
         opStack.pop();
       }
 
-      // If the character is an operator, perform calculations until an operator with lower precedence is found or the operator stack is empty
-      else if (/[+\-*/]/.test(char)) {
-        while (opStack.length > 0 && /[+\-*/]/.test(opStack[opStack.length - 1])) {
-          const topOp = opStack[opStack.length - 1];
-          if ((char === '+' || char === '-') && (topOp === '*' || topOp === '/')) {
-            break;
-          }
-          calculate();
-        }
-        opStack.push(char);
-      }
-
-      // If the character is not a digit, opening parenthesis, closing parenthesis, or operator, throw an error
+      // jika character bukan digit, operator, kurung buka, atau kurung tutup, throw error
       else {
         throw new Error('Pertanyaan tidak dapat diproses');
       }
     }
 
-    // Perform any remaining calculations in the operator stack
+    // push semua operator yang tersisa ke output queue
     while (opStack.length > 0) {
-      calculate();
+      const op = opStack.pop();
+      if (op === '(') {
+        throw new Error('Sintaks persamaan tidak sesuai');
+      }
+      output.push(op);
     }
 
-    // The final result will be the only element left in the number stack
-    if (numStack.length !== 1) {
-      throw new Error('Sintaks persamaan tidak sesuai');
+    // evaluasi output queue
+    for (let i = 0; i < output.length; i++) {
+      const token = output[i];
+      if (typeof token === 'number') {
+        stack.push(token);
+      } else {
+        calculate(token);
+      }
     }
+    return "Hasilnya adalah " + stack[0].toString();
 
-    const result = numStack[0];
-    if (isNaN(result)) {
-      throw new Error('Sintaks persamaan tidak sesuai');
-    }
-
-    return "Hasilnya adalah " + result.toString();
   } catch (error) {
     return error.message;
   }
 }
+
 
 export function date(question) {
   try {
