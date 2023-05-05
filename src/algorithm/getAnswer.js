@@ -9,9 +9,9 @@ export async function getAnswer(question, option) {
   // buat debugging
   console.log(option);
   console.log(data);
-
+  // return calculator(question);
   const dateRegex = /^.*(\d{1,2})\/(\d{1,2})\/(\d{4}).*$/;
-  const mathRegex = /^.*(\-?\d+(\.\d+)?)(\s*)(\+|\-|\*|\/)(\s*)((\-?\d+(\.\d+)?)|(\-\(\-?\d+(\.\d+)?\))).*$/;
+  const mathRegex = /^.*(\d+\.\d+|\d+)(\s*)((\+|\-|\*|\/)(\s*)((\d+\.\d+|\d+)|(\((\s*)\-(\s*)(\d+(\.\d+)?)(\s*)\)))+).*$/;
   const addQuestionRegex = /^Tambah pertanyaan \[([^\]]+)\] dengan jawaban \[([^\]]+)\]$/i;
   const deleteQuestionRegex = /^Hapus pertanyaan \[([^\]]+)\]$/i;
 
@@ -151,7 +151,7 @@ export function calculator(question) {
   try {
     // Remove any whitespace 
     question = question.replace(/\s/g, '');
-    const expressionRegex = /[0-9()+\-*/].*[0-9()+\-*/]/;
+    const expressionRegex =/[0-9()+\-*/].*[0-9()+\-*/]/;
     const expression = question.match(expressionRegex)[0];
 
     const stack = [];
@@ -214,7 +214,23 @@ export function calculator(question) {
         }
         opStack.push(char);
       }
+      
+      // jika character adalah kurung buka, dan karakter setelahnya adalah minus dan digit, masukkan ke output queue
+      else if (char === '(' && expression[i + 1] === '-' && /\d/.test(expression[i + 2])) {
+        opStack.push('(');
+        let j  = i+2;
+        let num = expression[j];
+        while (j < expression.length - 1 && (/\d/.test(expression[j + 1]) || expression[j + 1] === '.') ) {
+          num += expression[++j];
+        }
+        output.push(Number(num) * -1);
+        i = j;
+      }
+      // else if (char === '(' && /\d/.test(expression[i + 1])) {
+      //   opStack.push('(');
+      // }
 
+      
       // jika character adalah kurung buka, masukkan ke operator stack
       else if (char === '(') {
         opStack.push(char);
@@ -230,7 +246,7 @@ export function calculator(question) {
 
       // jika character bukan digit, operator, kurung buka, atau kurung tutup, throw error
       else {
-        throw new Error('Kalkulatornya rusak :(');
+        throw new Error('Sintaks error');
       }
     }
 
@@ -252,6 +268,11 @@ export function calculator(question) {
         calculate(token);
       }
     }
+
+    if (stack[0] === undefined || stack[0].toString() === "NaN") {
+      throw new Error('Error :(');
+    }
+
     return "Hasilnya adalah " + stack[0].toString();
 
   } catch (error) {
