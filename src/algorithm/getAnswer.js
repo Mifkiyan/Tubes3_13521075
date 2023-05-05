@@ -10,8 +10,8 @@ export async function getAnswer(question, option) {
   console.log(data);
   const dateRegex = /^.*(\d{1,2})\/(\d{1,2})\/(\d{4}).*$/;
   const mathRegex = /^.*(\d+\.\d+|\d+)(\s*)((\+|\-|\*|\/|\^)(\s*)((\d+\.\d+|\d+)|(\((\s*)\-(\s*)(\d+(\.\d+)?)(\s*)\)))+).*$/;
-  const addQuestionRegex = /^Tambah pertanyaan \[([^\]]+)\] dengan jawaban \[([^\]]+)\]$/i;
-  const deleteQuestionRegex = /^Hapus pertanyaan \[([^\]]+)\]$/i;
+  const addQuestionRegex = /^Tambah(kan)? pertanyaan \[([^\]]+)\] dengan jawaban \[([^\]]+)\]$/i;
+  const deleteQuestionRegex = /^Hapus(kan)? pertanyaan \[([^\]]+)\]$/i;
 
   const isDate = dateRegex.test(question);
   const isMath = mathRegex.test(question);
@@ -27,13 +27,13 @@ export async function getAnswer(question, option) {
   }
 
   if (isAddQuestion) {
-    const questionToAdd = question.match(addQuestionRegex)[1];
-    const answer = question.match(addQuestionRegex)[2];
+    const questionToAdd = question.match(addQuestionRegex)[2];
+    const answer = question.match(addQuestionRegex)[3];
     return addQuestiontoDatabase(option, data, questionToAdd, answer); 
   }
 
   if (isDeleteQuestion) {
-    const questionToDel = question.match(deleteQuestionRegex)[1];
+    const questionToDel = question.match(deleteQuestionRegex)[2];
     return deleteQuestiontoDatabase(option, data, questionToDel);
   }
 
