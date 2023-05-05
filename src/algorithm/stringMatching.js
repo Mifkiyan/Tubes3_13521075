@@ -127,19 +127,3 @@ export function computeLCS(str1, str2) {
     let similarityPercentage = (lcsStr.length * 200) / (str1Len + str2Len);
     return [lcsStr, parseFloat(similarityPercentage.toFixed(5))];
 }
-
-// let text = [];
-// text.push("Apa ibukota Indonesia?");
-// text.push("Apa ibukota Italy?");
-// text.push("Apa ibukota India?");
-
-// const pattern = "ibukota indo"
-// let index = [];
-
-// for (let i = 0; i < text.length; i++) {
-//     console.log(computeLCS(text[i], pattern));
-//     console.log(kmpSearch(text[i], pattern));
-//     console.log(bmSearch(text[i], pattern));
-// }
-
-// console.log(index);
