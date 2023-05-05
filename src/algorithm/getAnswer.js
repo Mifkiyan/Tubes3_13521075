@@ -9,7 +9,7 @@ export async function getAnswer(question, option) {
   console.log(option);
   console.log(data);
   const dateRegex = /^.*(\d{1,2})\/(\d{1,2})\/(\d{4}).*$/;
-  const mathRegex = /^.*(\d+\.\d+|\d+)(\s*)((\+|\-|\*|\/)(\s*)((\d+\.\d+|\d+)|(\((\s*)\-(\s*)(\d+(\.\d+)?)(\s*)\)))+).*$/;
+  const mathRegex = /^.*(\d+\.\d+|\d+)(\s*)((\+|\-|\*|\/|\^)(\s*)((\d+\.\d+|\d+)|(\((\s*)\-(\s*)(\d+(\.\d+)?)(\s*)\)))+).*$/;
   const addQuestionRegex = /^Tambah pertanyaan \[([^\]]+)\] dengan jawaban \[([^\]]+)\]$/i;
   const deleteQuestionRegex = /^Hapus pertanyaan \[([^\]]+)\]$/i;
 
@@ -149,7 +149,7 @@ export function calculator(question) {
   try {
     // Remove any whitespace 
     question = question.replace(/\s/g, '');
-    const expressionRegex =/[0-9()+\-*/].*[0-9()+\-*/]/;
+    const expressionRegex =/[0-9()+\-*/^].*[0-9()+\-*/^]/;
     const expression = question.match(expressionRegex)[0];
 
     const stack = [];
@@ -174,6 +174,8 @@ export function calculator(question) {
           }
           stack.push(num1 / num2);
           break;
+        case '^':
+          stack.push(Math.pow(num1, num2));
       }
     }
 
@@ -185,6 +187,8 @@ export function calculator(question) {
         case '*':
         case '/':
           return 2;
+        case '^':
+          return 3;
         default:
           return 0;
       }
@@ -206,7 +210,7 @@ export function calculator(question) {
       }
 
       // jika character adalah operator, re-assign operator yang lebih tinggi precedencenya ke output queue
-      else if (/[+\-*/]/.test(char)) {
+      else if (/[+\-*/^]/.test(char)) {
         while (opStack.length > 0 && precedence(opStack[opStack.length - 1]) >= precedence(char)) {
           output.push(opStack.pop());
         }
