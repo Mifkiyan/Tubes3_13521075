@@ -101,11 +101,13 @@ async function addQuestiontoDatabase(option, data, questionToAdd, answer) {
   if (option == "KMP") {
     for (let i = 0; i < data.length; i++) {
       if (sm.kmpSearch(data[i].userQuestion, questionToAdd) != -1 || sm.kmpSearch(questionToAdd, data[i].userQuestion) != -1) {
-        const sameAnswer = await Qna.findOne({ userQuestion: data[i].userQuestion, botAnswer: answer });
-        if (sameAnswer) {
-          return "Pertanyaan " + questionToAdd + " dengan jawaban yang sama sudah ada di database";
-        } else {
-          return updateQna(data[i].userQuestion, answer);
+        if (sm.computeLCS(data[i].userQuestion, questionToAdd)[1] > 50) {
+          const sameAnswer = await Qna.findOne({ userQuestion: data[i].userQuestion, botAnswer: answer });
+          if (sameAnswer) {
+            return "Pertanyaan " + questionToAdd + " dengan jawaban yang sama sudah ada di database";
+          } else {
+            return updateQna(data[i].userQuestion, answer);
+          }
         }
       }
     }
@@ -114,11 +116,13 @@ async function addQuestiontoDatabase(option, data, questionToAdd, answer) {
   else if (option == "BM") {
     for (let i = 0; i < data.length; i++) {
       if (sm.bmSearch(data[i].userQuestion, questionToAdd) != -1 || sm.bmSearch(questionToAdd, data[i].userQuestion) != -1) {
-        const sameAnswer = await Qna.findOne({ userQuestion: data[i].userQuestion, botAnswer: answer });
-        if (sameAnswer) {
-          return "Pertanyaan " + questionToAdd + " dengan jawaban yang sama sudah ada di database";
-        } else {
-          return updateQna(data[i].userQuestion, answer);
+        if (sm.computeLCS(data[i].userQuestion, questionToAdd)[1] > 50) {
+          const sameAnswer = await Qna.findOne({ userQuestion: data[i].userQuestion, botAnswer: answer });
+          if (sameAnswer) {
+            return "Pertanyaan " + questionToAdd + " dengan jawaban yang sama sudah ada di database";
+          } else {
+            return updateQna(data[i].userQuestion, answer);
+          }
         }
       }
     }
@@ -130,7 +134,9 @@ export function deleteQuestiontoDatabase(option, data, questionToDel) {
   if (option == "KMP") {
     for (let i = 0; i < data.length; i++) {
       if (sm.kmpSearch(data[i].userQuestion, questionToDel) != -1 || sm.kmpSearch(questionToDel, data[i].userQuestion) != -1) {
-        return deleteQna(data[i].userQuestion);
+        if (sm.computeLCS(data[i].userQuestion, questionToDel)[1] > 50) {
+          return deleteQna(data[i].userQuestion);
+        }
       }
     }
     return "Tidak ada pertanyaan [" + questionToDel + "] di database";
@@ -138,7 +144,9 @@ export function deleteQuestiontoDatabase(option, data, questionToDel) {
   else if (option == "BM") {
     for (let i = 0; i < data.length; i++) {
       if (sm.bmSearch(data[i].userQuestion, questionToDel) != -1 || sm.bmSearch(questionToDel, data[i].userQuestion) != -1) {
-        return deleteQna(data[i].userQuestion);
+        if (sm.computeLCS(data[i].userQuestion, questionToDel)[1] > 50) {
+          return deleteQna(data[i].userQuestion);
+        }
       }
     }
     return "Tidak ada pertanyaan [" + questionToDel + "] di database";
@@ -149,7 +157,7 @@ export function calculator(question) {
   try {
     // Remove any whitespace 
     question = question.replace(/\s/g, '');
-    const expressionRegex =/[0-9()+\-*/^].*[0-9()+\-*/^]/;
+    const expressionRegex =/[0-9()+\-*/].*[0-9()+\-*/]/;
     const expression = question.match(expressionRegex)[0];
 
     const stack = [];
@@ -291,7 +299,7 @@ export function date(question) {
     return "Masukan tanggal tidak sesuai";
   }
 
-  if (month == 4 || month == 6 || month == 9 || month == 11 && day > 30) {
+  if ((month == 4 || month == 6 || month == 9 || month == 11) && day > 30) {
     return "Masukan tanggal tidak sesuai";
   }
 
