@@ -44,7 +44,9 @@ export async function getAnswer(question, option) {
     if (option == "KMP") {
       for (let i = 0; i < data.length; i++) {
         if (sm.kmpSearch(data[i].userQuestion, question) != -1 || sm.kmpSearch(question, data[i].userQuestion) != -1) {
-          exactMatch.push(i);
+          if (sm.computeLCS(data[i].userQuestion, question)[1] > 50) {
+            exactMatch.push(i);
+          }
         }
         similarityList.push(sm.computeLCS(data[i].userQuestion, question)[1]);
       }
@@ -52,7 +54,9 @@ export async function getAnswer(question, option) {
     else if (option == "BM") {
       for (let i = 0; i < data.length; i++) {
         if (sm.bmSearch(data[i].userQuestion, question) != -1 || sm.bmSearch(question, data[i].userQuestion) != -1) {
-          exactMatch.push(i);
+          if (sm.computeLCS(data[i].userQuestion, question)[1] > 50) {
+            exactMatch.push(i);
+          }
         }
         similarityList.push(sm.computeLCS(data[i].userQuestion, question)[1]);
       }
