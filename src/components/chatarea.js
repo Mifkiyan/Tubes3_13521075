@@ -29,27 +29,3 @@ export default function Chatarea({ roomid }) {
 
   )
 }
-
-
-
-// export default () => {
-//   const [inputValue, setInputValue] = useState('')
-//   const [chatLog, setChatLog] = useState([])
-  
-//   const handleSubmit = (event) => {
-//     event.preventDefault()
-//     if (inputValue === '') return
-//     setChatLog((prevChatLog) => [...prevChatLog, inputValue])
-//     setInputValue('')
-//   }
-
-//   <div className={styles.chatArea}>
-//     {
-//       chatLog.map((message, index) => (
-//         <div className={styles.chatUser}key = {index} >
-//           <p className={styles.chatUserContent}>{message}</p>
-//         </div>
-//       ))
-//     }
-//   </div>
-// }

@@ -52,9 +52,6 @@ export default function Home() {
           roomid && <Typebox roomid = {roomid}></Typebox>
         }
       </div>
-      
-
-      
     </>
   )
 }

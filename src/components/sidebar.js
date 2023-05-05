@@ -11,14 +11,12 @@ export default function Sidebar({ getRooms, handler })  {
 
   const [selectedValue, setSelectedValue] = useState("KMP");
 
-  // const state = useSelector((state) => state.app.client.chosenOption);
   const dispatch = useDispatch();
 
   const handleChange = (event) => {
     setSelectedValue(event.target.value);
     dispatch(optionChangeAction(event.target.value));
     console.log("test" + event.target.value);
-    // console.log(state);
   };
 
   const queryClient = useQueryClient();

@@ -12,7 +12,7 @@ export async function getAllRooms(req, res) {
 export async function createRoom(req, res) {
     try {
         const currentDate = new Date();
-        const options = { timeZone: 'Asia/Jakarta', hour12: false }; // Replace with your local timezone
+        const options = { timeZone: 'Asia/Jakarta', hour12: false };
         const dateTimeString = currentDate.toLocaleString('en-US', options);
 
         const len = await (await Room.find({})).length;

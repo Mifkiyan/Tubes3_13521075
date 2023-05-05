@@ -2,7 +2,6 @@ import Message from '../models/message.model.js';
 import Room from '../models/room.model.js';
 import { getAnswer } from '../src/algorithm/getAnswer.js';
 
-
 export async function getChat(req, res) {
   try {
     const { roomid } = req.query;
@@ -26,16 +25,8 @@ export async function getChat(req, res) {
 export async function createChat(req, res) {
   const { roomid } = req.query;
   const { question, answer, chosenOption }  = req.body;
-
-  if (!roomid) {
-    return res.status(400).json({error: "room id not found"});
-  }
-
-  if (!question && !answer) {
-    return res.status(400).json({error: "data not found"});
-  }
-
   const rooms = await Room.findOne({ _id: roomid });
+
   const newAnswer = await getAnswer(question, chosenOption);
   if (!rooms) {
     return res.status(400).json({error: "room not found"});
@@ -43,7 +34,7 @@ export async function createChat(req, res) {
 
   const message = new Message({
     question,
-    answer : newAnswer, // dummy answer
+    answer : newAnswer,
     room : roomid
   })
 
@@ -59,10 +50,6 @@ export async function createChat(req, res) {
 export async function deleteChat (req, res) {
   try {
     const { id } = req.query;
-
-    if (!id) {
-      return res.status(400).json({error: "NO ID PROVIDED"});
-    }
 
     await Message.findByIdAndDelete(id);
     return res.status(200).json({success: true, deleted: id});

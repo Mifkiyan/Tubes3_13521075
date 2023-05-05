@@ -1,5 +1,4 @@
 import Qna from "../../models/qna.model.js";
-import { useSelector } from "react-redux";
 import { updateQna, createQna, deleteQna, getQna } from "../../controller/qna.controller.js";
 import * as sm from "./stringMatching.js";
 
@@ -9,7 +8,6 @@ export async function getAnswer(question, option) {
   // buat debugging
   console.log(option);
   console.log(data);
-  // return calculator(question);
   const dateRegex = /^.*(\d{1,2})\/(\d{1,2})\/(\d{4}).*$/;
   const mathRegex = /^.*(\d+\.\d+|\d+)(\s*)((\+|\-|\*|\/)(\s*)((\d+\.\d+|\d+)|(\((\s*)\-(\s*)(\d+(\.\d+)?)(\s*)\)))+).*$/;
   const addQuestionRegex = /^Tambah pertanyaan \[([^\]]+)\] dengan jawaban \[([^\]]+)\]$/i;
@@ -94,7 +92,7 @@ export async function getAnswer(question, option) {
       return text;
     }
     else {
-      return "Pertanyaan tidak dapat diproses (regex)";
+      return "Pertanyaan tidak dapat diproses";
     }
   }
 }
@@ -226,10 +224,6 @@ export function calculator(question) {
         output.push(Number(num) * -1);
         i = j;
       }
-      // else if (char === '(' && /\d/.test(expression[i + 1])) {
-      //   opStack.push('(');
-      // }
-
       
       // jika character adalah kurung buka, masukkan ke operator stack
       else if (char === '(') {
@@ -308,7 +302,7 @@ export function date(question) {
 
   const totalDay = countDay(day, month, year);
   const dayOfWeek = totalDay % 7;
-  const dayOfWeekString = ['minggu', 'senin', 'selasa', 'rabu', 'kamis', 'jumat', 'sabtu'][dayOfWeek];
+  const dayOfWeekString = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'][dayOfWeek];
 
   return "Hari " + dayOfWeekString;
 }

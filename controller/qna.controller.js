@@ -3,11 +3,6 @@ import Qna from "../models/qna.model.js";
 export async function getQna() {
   try {
     const qna = await Qna.find({});
-
-    // if (!qna) {
-    //   res.status(400).json({error: "QNA NOT FOUND"});
-    // }
-    // res.status(200).json(qna);
     return qna; 
   } catch (error) {
     res.status(400).json({error: "ERROR GETTING QNA"});
@@ -42,7 +37,6 @@ export async function deleteQna(question) {
   }
 }
 
-//to update the Qna
 export async function updateQna(questionToAdd, answer) {
   try {
     const qna = await Qna.findOneAndUpdate(
