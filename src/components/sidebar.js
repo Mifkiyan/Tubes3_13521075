@@ -67,15 +67,26 @@ export default function Sidebar({ getRooms, handler })  {
         <div>
           <p className={styles.choosetxt}>Choose Algorithm !</p>
         </div>
+         <div className={styles.optionWrapper}>
+          <div className={styles.option}>
+            <input name="options" type="radio" value="KMP" id="kmp" checked = {selectedValue === "KMP"} onChange={handleChange}/>
+            <label for="kmp">KMP</label>
+          </div>
 
-        <div className={styles.option}>
-          <input name="options" type="radio" value="KMP" id="kmp" checked = {selectedValue === "KMP"} onChange={handleChange}/>
-          <label for="kmp">KMP</label>
+          <div className={styles.option}>
+            <input name="options" type="radio" value="BM" id="bm" checked = {selectedValue === "BM"} onChange={handleChange}/>
+            <label for="bm">BM</label>
+          </div>
         </div>
 
-        <div className={styles.option}>
-          <input name="options" type="radio" value="BM" id="bm" checked = {selectedValue === "BM"} onChange={handleChange}/>
-          <label for="bm">BM</label>
+        <div className={styles.howToUseWrapper}>
+          <p className={styles.howToUseTxt}>Usage</p>
+          <ul className={styles.howToUse}>
+            <li>Tambahkan pertanyaan [<span className={styles.span}>pertanyaan</span>] dengan jawaban [<span className={styles.span}>jawaban</span>]</li>
+            <li>Hapus pertanyaan [<span className={styles.span}>pertanyaan</span>]</li>
+            <li>Simple math expressions, only(/*-+^) <span className={styles.span}>ex.1+7*(11)</span></li>
+            <li>Simple date expressions <span className={styles.span}>ex.22/02/2002</span> </li>
+          </ul>
         </div>
       </div>
     </sidebar>
