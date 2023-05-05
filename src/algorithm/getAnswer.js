@@ -11,7 +11,7 @@ export async function getAnswer(question, option) {
   console.log(data);
 
   const dateRegex = /^.*(\d{1,2})\/(\d{1,2})\/(\d{4}).*$/;
-  const mathRegex = /^.*(\d+\.\d+|\d+)(\s*)(\+|\-|\*|\/)(\s*)(\d+\.\d+|\d+).*$/;
+  const mathRegex = /^.*(\-?\d+(\.\d+)?)(\s*)(\+|\-|\*|\/)(\s*)((\-?\d+(\.\d+)?)|(\-\(\-?\d+(\.\d+)?\))).*$/;
   const addQuestionRegex = /^Tambah pertanyaan \[([^\]]+)\] dengan jawaban \[([^\]]+)\]$/i;
   const deleteQuestionRegex = /^Hapus pertanyaan \[([^\]]+)\]$/i;
 
@@ -151,7 +151,7 @@ export function calculator(question) {
   try {
     // Remove any whitespace 
     question = question.replace(/\s/g, '');
-    const expressionRegex =/^.*(\d+\.\d+|\d+)(\s*)(\+|\-|\*|\/)(\s*)((\+|\-)?(\d+\.\d+|\d+)).*$/;
+    const expressionRegex = /[0-9()+\-*/].*[0-9()+\-*/]/;
     const expression = question.match(expressionRegex)[0];
 
     const stack = [];
@@ -261,40 +261,73 @@ export function calculator(question) {
 
 
 export function date(question) {
-  try {
-    const dateRegex = /(\d{1,2})\/(\d{1,2})\/(\d{4})/;
-    const match = question.match(dateRegex);
+  const dateRegex = /(\d{1,2})\/(\d{1,2})\/(\d{4})/;
+  const match = question.match(dateRegex);
 
-    const day = parseInt(match[1]);
-    const month = parseInt(match[2]);
-    const year = parseInt(match[3]);
+  const day = parseInt(match[1]);
+  const month = parseInt(match[2]);
+  const year = parseInt(match[3]);
 
-    const date = new Date(year, month - 1, day);
-
-    if (date.getDate() !== day || date.getMonth() !== month - 1 || date.getFullYear() !== year) {
-      throw new Error('Masukan tanggal tidak sesuai');
-    }
-
-    const dayOfWeek = date.getDay();
-    const dayOfWeekString = ['minggu', 'senin', 'selasa', 'rabu', 'kamis', 'jumat', 'sabtu'][dayOfWeek];
-
-    return "Hari " + dayOfWeekString;
-  } catch (error) {
-    return error.message;
+  if (day < 1 || day > 31 || month < 1 || month > 12 || year < 1) {
+    return "Masukan tanggal tidak sesuai";
   }
+
+  if (month == 4 || month == 6 || month == 9 || month == 11 && day > 30) {
+    return "Masukan tanggal tidak sesuai";
+  }
+
+  if (month == 2) {
+    if (isYearKabisat(year) && day > 29) {
+      return "Masukan tanggal tidak sesuai";
+    }
+    else if (!isYearKabisat(year) && day > 28) {
+      return "Masukan tanggal tidak sesuai";
+    }
+  }
+
+  const totalDay = countDay(day, month, year);
+  const dayOfWeek = totalDay % 7;
+  const dayOfWeekString = ['minggu', 'senin', 'selasa', 'rabu', 'kamis', 'jumat', 'sabtu'][dayOfWeek];
+
+  return "Hari " + dayOfWeekString;
 }
 
-// console.log(getAnswer('Apa ibukota Indonesia?'));
-// console.log(getAnswer('Apa mata kuliah IF semester 4 yang paling keos?'));
-// console.log(getAnswer('Apa ibukota Indonsa'));
-// console.log(getAnswer('Apa ibukota la'));
-// console.log(getAnswer('Coba hitung 1 * ( 2 + 29 )'));
-// console.log(getAnswer('5+2*5+?'));
-// console.log(getAnswer('Hari apa 25/02/2023'));
-// console.log(getAnswer('31/01/2050'));
-// console.log(getAnswer('31/02/2050'));
-// console.log(getAnswer('Tambah pertanyaan [Apa ibukota Indonesia?] dengan jawaban [Jakarta]'));
-// console.log(getAnswer('Hapus pertanyaan [Apa ibukota Indonesia?]'));
+function isYearKabisat(year) {
+  if (year % 4 === 0) {
+    if (year % 100 === 0) {
+      return year % 400 === 0;
+    }
+    return true;
+  }
+  return false;
+}
 
-// const data = getQna();
-// console.log(data);
+function countDay(day, month, year) {
+  let totalDay = 0;
+  for (let i = 1; i < year; i++) {
+    if (isYearKabisat(i)) {
+      totalDay += 366;
+    }
+    else {
+      totalDay += 365;
+    }
+  }
+  for (let i = 1; i < month; i++) {
+    if (i == 4 || i == 6 || i == 9 || i == 11) {
+      totalDay += 30;
+    }
+    else if (i == 2) {
+      if (isYearKabisat(year)) {
+        totalDay += 29;
+      }
+      else {
+        totalDay += 28;
+      }
+    }
+    else {
+      totalDay += 31;
+    }
+  }
+  totalDay += day;
+  return totalDay;
+}
